@@ -1,0 +1,90 @@
+---
+title: "marspec"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+An R package to access and manage [MARSPEC](http://www.marspec.org/) data. See the [MARSPEC](http://www.marspec.org/) website for details on the data and to learn how to cite the data. The data is available via other packages, but this package is super simple as it just downloads and reads the data for you, and it will yield either [stars](https://r-spatial.github.io/stars/) of [SpatRaster](https://rspatial.org/) class raster objects - your choice.  
+
+# Requirements
+ 
+  + [R v4.1+](https://www.r-project.org/)
+  + [rlang](https://CRAN.R-project.org/package=rlang)
+  + [archive](https://CRAN.R-project.org/package=archive)
+  + [dplyr](https://CRAN.R-project.org/package=dplyr)
+  + [stars](https://CRAN.R-project.org/package=stars)
+  + [terra](https://CRAN.R-project.org/package=terra)
+  
+# Installation
+
+```
+remotes::install_github("BigelowLab/marspec")
+```
+
+# Set your data path
+
+Place your data in a separate directory from your current project so thaat you can easily reuse that data in other projects. Let's say you planned to use a Dropbox directory for this, such as `/Users/ben/Library/CloudStorage/Dropbox/data/marspec`. Of course, you might have a different preferred path.  You only need to do this once, unless you decide later to change the location of your data.
+
+```{r set_path}
+suppressPackageStartupMessages({
+  library(marspec)
+  library(stars)
+  library(terra)
+})
+set_root_path("/Users/ben/Library/CloudStorage/Dropbox/data/marspec")
+```
+
+# Fetch some data
+
+Datasets are fetched by the filename you see on these pages: [modern](https://www.esapubs.org/archive/ecol/E094/086/#data) and [paleo](http://marspec.weebly.com/paleo-data.html).  The names are not readily apparent on the page, so you can use the `marspec_uri()` function included with this package to list them.
+
+```{r list_available}
+names(marspec_uri())
+```
+
+You can read about these at the [MARSPEC](http://www.marspec.org/) website.
+
+Let's fetch a relatively small data set for demonstration purposes. `MARSPEC_10m` is a relatively course resolution (hence small files) modern period data set.
+
+```
+fetch_marspec("MARSPEC_10m")
+```
+Now let's see what we have.
+
+```{r list_local}
+ff = list_marspec()
+ff
+```
+
+You can see that just one data set includes quite a few rasters.
+
+# Read in a raster
+
+Use that raster name to load that one raster.
+
+```{r read_marspec}
+x = read_marspec("biogeo13_10m")
+plot(x)
+```
+
+## Prefer `SpatRaster`?
+
+```{r read_spatraster}
+y = read_marspec("biogeo13_10m", form = "SpatRaster")
+plot(y)
+```
+
+
+
+You may be wondering just what the heck `biogeo13_10m` is.  The trailing `_10m` tells us about the resolition (10 minute).  The 'biogeo13' refers to a particular variable described in [this paper](https://www.esapubs.org/archive/ecol/E095/149/metadata.php).  You can read `table 1` in here as a data frame (tibble actually).
+
+```{r metadata}
+meta = marspec_metadata() |>
+  dplyr::filter(Layer.Name == "biogeo13") |>
+  print()
+```
+
+Ah, annual SST mean.  Got it.

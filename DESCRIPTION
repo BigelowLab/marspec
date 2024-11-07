@@ -1,0 +1,19 @@
+Package: marspec
+Title: marspec
+Description: An R package to access and manage MARSPEC data.
+URL: https://github.com/BigelowLab/marspec
+Version: 0.1
+Depends:
+    R (>= 4.2)
+Imports:
+    rlang,
+    archive,
+    dplyr,
+    stars,
+    terra
+Roxygen: list(markdown = TRUE)
+Maintainer: Ben Tupper <btupper@bigelow.org>
+Author: Ben Tupper <btupper@bigelow.org>
+License: GNU_v3 + file LICENSE
+Encoding: UTF-8
+RoxygenNote: 7.3.2
